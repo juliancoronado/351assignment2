@@ -1,7 +1,5 @@
-#include <iostream>
 #include "Header.h"
-#include <string>
-using namespace std;
+#include "MemManager.h"
 
 int main()
 {
@@ -10,9 +8,9 @@ int main()
 	string inputFile;
 	
 	cout << "This program simulates memory management." << endl;
-	cout << "Memory Size > " << endl;
+	cout << "Memory Size > ";
 	cin >> memorySize;
-	cout << "Page Size > 1: 100, 2: 200, 3: 400" << endl;
+	cout << "Page Size (1: 100, 2: 200, 3: 400) > ";
 	cin >> pageSize;
 
 	cout << "Input the name of the file you would like to process." << endl;
@@ -21,19 +19,25 @@ int main()
 
 	switch (pageSize) {
 	case 1:
-		
+		pageSize = 100;
 		break;
 	case 2:
-
+		pageSize = 200;
 		break;
 
 	case 3:
-
+		pageSize = 300;
 		break;
 	default:
-		cout << "Enter a valid input for Page Size > 1, 2, or 3." << endl;
+		cout << "Invalid selection, defaulting to 100." << endl;
+		pageSize = 100;
 	}
 
-	system("PAUSE");
+	MemManager memManager;
+
+	memManager.readFile(inputFile, pageSize);
+
+
+	//system("PAUSE");
 	return 0;
 }

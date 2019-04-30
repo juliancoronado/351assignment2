@@ -2,6 +2,11 @@
 #include <queue>
 #include <map>
 #include <string>
+#include <iostream>
+#include <fstream>
+#include <math.h>
+
+using namespace std;
 
 struct Process{
 	int pid;

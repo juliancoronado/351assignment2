@@ -4,13 +4,17 @@
 class MemManager {
 
 private:
-	std::queue <Process> processes;
+	queue <Process> processes;
 	int memSize;
-	std::map <int, Process> memMap;
-	int clock = 100;
+	map <int, Process> memMap;
+	int clock;
 	int numProcesses;
 
 public:
-	void readFile(std::string fileName);
+
+    MemManager();
+    ~MemManager();
+
+	void readFile(string fileName, int pageSize);
 	void writeFile();
 };
