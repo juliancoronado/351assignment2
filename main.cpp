@@ -33,11 +33,11 @@ int main()
 		pageSize = 100;
 	}
 
-	MemManager memManager;
+	MemManager memManager(memorySize, pageSize);
 
 	memManager.readFile(inputFile, pageSize);
 
-
+	memManager.simulate();
 	//system("PAUSE");
 	return 0;
 }

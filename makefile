@@ -7,7 +7,7 @@ CC = g++
 #COMPILER_FLAGS specifies the additional compilation options we're using
 # -Wall enables all warnings
 # -g enables debugging
-COMPILER_FLAGS = -Wall
+COMPILER_FLAGS = -Wall -g
 
 #OBJ_NAME specifies the name of our  program executable
 OBJ_NAME = memsimulator

@@ -5,6 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include <math.h>
+#include <vector>
 
 using namespace std;
 
@@ -17,4 +18,10 @@ struct Process{
 	int numPages;	//memCost/pageSize
 	bool running;
 	bool terminated;
+	bool isReady;
+
+	bool operator<(const Process &rhs) const
+	{
+		return (pid < rhs.pid);
+	}
 };
