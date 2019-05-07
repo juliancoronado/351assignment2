@@ -140,12 +140,15 @@ void MemManager::allocateProcess(Process memProcess)
 		if(memMap[i].pid == -1) // If no process is in that page, increment free frames
 		{
 			freeFrames++;
-			end++;
 		}
-
+		else
+		{
+			start++;
+		}
+		
 		if(freeFrames >= memProcess.numPages)
 		{
-			for(int j = start; j < end; j++)
+			for(int j = start; j < memProcess.numPages + start; j++)
 			{
 				memMap[j] = memProcess;
 			}
@@ -158,6 +161,7 @@ void MemManager::allocateProcess(Process memProcess)
 void MemManager::printMemMap(int pageSize)
 {
 	int acc = 0;
+	int pageNum = 1;
 
 	cout << "\tMemory Map: \n";
 
@@ -165,11 +169,18 @@ void MemManager::printMemMap(int pageSize)
 	{
 		if(memMap[i].pid != -1)
 		{
-			for(int j = 0; j < memMap[i].numPages; j++)
+			int currProcId = memMap[i].pid;
+
+			pageNum = 1;
+
+			while(memMap[i].pid == currProcId)
 			{
-				cout << '\t' << acc << "-" << acc+99 << ": Process " << memMap[i].pid << ", Page " << j+1 << endl;
+				cout << '\t' << acc << "-" << acc+99 << ": Process " << memMap[i].pid << ", Page " << pageNum << endl;
 				acc += pageSize;
+				i++;
+				pageNum++;
 			}
+			i--; // i is incremented too many times, decrement to reverse effect
 		}
 		else
 		{
@@ -181,10 +192,20 @@ void MemManager::printMemMap(int pageSize)
 			{
 				acc += pageSize;
 				freeFrameCount++;
+				i++;
 			}
 
-			cout << "-" << acc+99;
-			i = freeFrameCount;
+			cout << "-";
+
+			if(i+1 == memMap.size())
+			{
+				cout << acc-1 << endl;
+			}
+			else
+			{
+				cout << acc+99 << endl;
+			}
+			
 		}
 				
 	}
@@ -212,11 +233,20 @@ void MemManager::simulate()
 		processes.pop();
 
 		printQueue(processes);
-
+		
 		allocateProcess(memProcess);
 
-		printQueue(processes);
-
 		printMemMap(pageSize);
+
+		while(!processes.empty())
+		{
+			memProcess = processes.front();
+			cout << "\tMM moves Process " << memProcess.pid << " to memory\n";
+
+			processes.pop();
+			printQueue(processes);
+			allocateProcess(memProcess);
+			printMemMap(pageSize);
+		}
 	}
 }
