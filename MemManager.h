@@ -20,10 +20,12 @@ private:
 
 	void initMap();
 	void markReadyProcesses(int clock);
+	vector<Process> getFinishedProcesses(int clock);
 	vector<Process> getReadyProcesses();
 	void printQueue(queue<Process> copyProcessQueue);
-	void pushArrivals(const vector<Process> &readyProcesses);
+	void pushArrivals(vector<Process> &readyProcesses);
 	void allocateProcess(Process memProcess);
+	void deallocateProcess(Process memProcess);
 	void printMemMap(int);
 
 public:

@@ -119,7 +119,7 @@ void MemManager::printQueue(queue<Process> copyProcessQueue)
 	cout << "]\n";
 }
 
-void MemManager::pushArrivals(const vector<Process> &readyProcesses)
+void MemManager::pushArrivals(vector<Process> &readyProcesses)
 {
 	for(int i = 0; i < readyProcesses.size(); i++)
 	{
@@ -134,6 +134,8 @@ void MemManager::allocateProcess(Process memProcess)
 	int freeFrames = 0;
 	int start = 0;
 	int end = 0;
+
+	memProcess.running = true;
 
 	for(int i = 0; i < memMap.size(); i++)
 	{
@@ -167,37 +169,37 @@ void MemManager::printMemMap(int pageSize)
 
 	for (int i = 0; i < memMap.size(); i++)
 	{
-		if(memMap[i].pid != -1)
+		if(memMap[i].pid != -1) // If the current process at memMap[i] is not empty
 		{
 			int currProcId = memMap[i].pid;
 
 			pageNum = 1;
 
-			while(memMap[i].pid == currProcId)
+			while(i < memMap.size() && memMap.at(i).pid == currProcId)
 			{
 				cout << '\t' << acc << "-" << acc+99 << ": Process " << memMap[i].pid << ", Page " << pageNum << endl;
 				acc += pageSize;
 				i++;
 				pageNum++;
 			}
-			i--; // i is incremented too many times, decrement to reverse effect
+			i--; // i is incremented too many times, decrement to counter
 		}
 		else
 		{
 			int freeFrameOutput = acc;
-			int freeFrameCount = i;
 			cout << "\tFree Frame(s): " << freeFrameOutput;
 
-			while(memMap[freeFrameCount].pid == -1)
+			while(i < memMap.size() && memMap.at(i).pid == -1)
 			{
 				acc += pageSize;
-				freeFrameCount++;
 				i++;
 			}
 
 			cout << "-";
 
-			if(i+1 == memMap.size())
+			i--; // i is incremented one too many times, decrement to counter
+
+			if(i < memMap.size())
 			{
 				cout << acc-1 << endl;
 			}
@@ -206,8 +208,39 @@ void MemManager::printMemMap(int pageSize)
 				cout << acc+99 << endl;
 			}
 			
+			
+		}	
+	}
+}
+
+vector<Process> MemManager::getFinishedProcesses(int clock)
+{
+	vector<Process> temp;
+
+	for(Process &current: listProcesses)
+	{
+		if(clock == current.arrivalTime + current.burstTime)
+		{
+			temp.push_back(current);
 		}
-				
+	}
+
+	return temp;
+}
+
+void MemManager::deallocateProcess(Process memProcess)
+{
+	Process removeProcess;
+	removeProcess.pid = -1;
+
+	cout << "\tProcess " << memProcess.pid << " completes\n";
+
+	for(int i = 0; i < memMap.size(); i++)
+	{
+		if(memMap[i].pid == memProcess.pid)
+		{
+			memMap[i] = removeProcess;
+		}
 	}
 }
 
@@ -225,18 +258,7 @@ void MemManager::simulate()
 	{
 		cout << "t = " << clock << ": "; 
 
-		pushArrivals(readyProcesses); // Push the newly arrived processes
-
-		memProcess = processes.front(); // Get the front of the queue 
-		cout << "\tMM moves Process " << memProcess.pid << " to memory\n";
-		
-		processes.pop();
-
-		printQueue(processes);
-		
-		allocateProcess(memProcess);
-
-		printMemMap(pageSize);
+		pushArrivals(readyProcesses); // Push the newly arrived processes to the processes queue
 
 		while(!processes.empty())
 		{
@@ -248,5 +270,16 @@ void MemManager::simulate()
 			allocateProcess(memProcess);
 			printMemMap(pageSize);
 		}
+	}
+
+	clock = 1000;
+
+	vector<Process> finishedProcesses = getFinishedProcesses(clock);
+
+	for(int i = 0; i < finishedProcesses.size(); i++)
+	{	
+		cout << "t = " << clock << ": \n";
+		deallocateProcess(finishedProcesses[i]);
+		printMemMap(pageSize);
 	}
 }
