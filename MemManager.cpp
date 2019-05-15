@@ -78,24 +78,13 @@ void MemManager::initMap()
 	}
 }
 
-void MemManager::markReadyProcesses(int clock)
-{
-	for(Process &current : listProcesses)
-	{
-		if(current.arrivalTime == clock) // If clock is equal to arrival time
-		{
-			current.isReady = true;
-		}
-	}
-}
-
 vector<Process> MemManager::getReadyProcesses()
 {
 	vector<Process> temp;
 
-	for(Process &current: listProcesses)
+	for(Process &current : listProcesses)
 	{
-		if(current.isReady)
+		if(current.arrivalTime == clock) // If clock is equal to arrival time
 		{
 			temp.push_back(current);
 		}
@@ -207,8 +196,6 @@ void MemManager::printMemMap(int pageSize)
 			{
 				cout << acc+99 << endl;
 			}
-			
-			
 		}	
 	}
 }
@@ -250,36 +237,40 @@ void MemManager::simulate()
 
 	initMap(); // Initialize map to empty
 
-	markReadyProcesses(clock); // Mark ready process according to the clock
-
-	vector<Process> readyProcesses = getReadyProcesses(); // Get the ready process that were marked earlier
-
-	if(!readyProcesses.empty()) // If the list of ready processes is not empty, we have another event
+	while(!listProcesses.empty())
 	{
-		cout << "t = " << clock << ": "; 
+		vector<Process> readyProcesses = getReadyProcesses(); // Get the ready processes according to the clock
 
-		pushArrivals(readyProcesses); // Push the newly arrived processes to the processes queue
-
-		while(!processes.empty())
+		if (!readyProcesses.empty()) // If the list of ready processes is not empty, we have another event
 		{
-			memProcess = processes.front();
-			cout << "\tMM moves Process " << memProcess.pid << " to memory\n";
+			cout << "\nt = " << clock << ": ";
 
-			processes.pop();
-			printQueue(processes);
-			allocateProcess(memProcess);
+			pushArrivals(readyProcesses); // Push the newly arrived processes to the processes queue
+
+			while (!processes.empty())
+			{
+				memProcess = processes.front();
+				cout << "\tMM moves Process " << memProcess.pid << " to memory\n";
+
+				processes.pop();
+				printQueue(processes);
+				allocateProcess(memProcess);
+				printMemMap(pageSize);
+			}
+		}
+
+		vector<Process> finishedProcesses = getFinishedProcesses(clock);
+
+		for (int i = 0; i < finishedProcesses.size(); i++)
+		{
+			//cout << "t = " << clock << ": \n";
+			deallocateProcess(finishedProcesses[i]);
 			printMemMap(pageSize);
 		}
-	}
 
-	clock = 1000;
+		readyProcesses.clear();
+		finishedProcesses.clear();
 
-	vector<Process> finishedProcesses = getFinishedProcesses(clock);
-
-	for(int i = 0; i < finishedProcesses.size(); i++)
-	{	
-		cout << "t = " << clock << ": \n";
-		deallocateProcess(finishedProcesses[i]);
-		printMemMap(pageSize);
+		clock++;
 	}
 }

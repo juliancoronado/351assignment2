@@ -19,7 +19,6 @@ private:
 	int numPages;
 
 	void initMap();
-	void markReadyProcesses(int clock);
 	vector<Process> getFinishedProcesses(int clock);
 	vector<Process> getReadyProcesses();
 	void printQueue(queue<Process> copyProcessQueue);
