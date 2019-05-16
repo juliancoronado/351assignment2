@@ -26,6 +26,8 @@ private:
 	void allocateProcess(Process memProcess);
 	void deallocateProcess(Process memProcess);
 	void printMemMap(int);
+	int countFreePages();
+	void checkSimulationComplete(bool& done);
 
 public:
 

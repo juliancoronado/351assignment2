@@ -113,7 +113,7 @@ void MemManager::pushArrivals(vector<Process> &readyProcesses)
 	for(int i = 0; i < readyProcesses.size(); i++)
 	{
 		processes.push(readyProcesses[i]);
-		cout << "\tProcess " << readyProcesses[i].pid << " arrives\n";
+		cout << "\n\tProcess " << readyProcesses[i].pid << " arrives\n";
 		printQueue(processes); 
 	}
 }
@@ -153,6 +153,25 @@ void MemManager::printMemMap(int pageSize)
 {
 	int acc = 0;
 	int pageNum = 1;
+	int adder;
+
+	switch (pageSize)
+	{
+	case 100:
+		adder = 99;
+		break;
+	
+	case 200:
+		adder = 199;
+		break;
+	
+	case 400:
+		adder = 399;
+
+	default:
+		adder = 100;
+		break;
+	}
 
 	cout << "\tMemory Map: \n";
 
@@ -166,7 +185,7 @@ void MemManager::printMemMap(int pageSize)
 
 			while(i < memMap.size() && memMap.at(i).pid == currProcId)
 			{
-				cout << '\t' << acc << "-" << acc+99 << ": Process " << memMap[i].pid << ", Page " << pageNum << endl;
+				cout << '\t' << acc << "-" << acc+adder << ": Process " << memMap[i].pid << ", Page " << pageNum << endl;
 				acc += pageSize;
 				i++;
 				pageNum++;
@@ -208,6 +227,7 @@ vector<Process> MemManager::getFinishedProcesses(int clock)
 	{
 		if(clock == current.arrivalTime + current.burstTime)
 		{
+			current.terminated = true;
 			temp.push_back(current);
 		}
 	}
@@ -231,46 +251,89 @@ void MemManager::deallocateProcess(Process memProcess)
 	}
 }
 
+int MemManager::countFreePages()
+{
+	int freePages;
+
+	for(int i = 0; i < memMap.size(); i++)
+	{
+		if(memMap.at(i).pid == -1)
+		{
+			freePages++;
+		}
+	}
+
+	return freePages;
+}
+
+void MemManager::checkSimulationComplete(bool& done)
+{
+	for(int i = 0; i < listProcesses.size(); i++)
+	{
+		if(!listProcesses[i].terminated) // If a process has not been terminated
+		{
+			done = false; // We are not done
+			return;
+		}
+	}
+
+	done = true; // If every process has been marked as terminated, we are done
+}
+
 void MemManager::simulate()
 {
 	Process memProcess;
+	bool clockOutput = false; // Used to output the clock only once
+	bool done = false; // boolean variable used to exit the simulator when complete
+	int freePages;
 
 	initMap(); // Initialize map to empty
 
-	while(!listProcesses.empty())
+	while(!done)
 	{
 		vector<Process> readyProcesses = getReadyProcesses(); // Get the ready processes according to the clock
 
 		if (!readyProcesses.empty()) // If the list of ready processes is not empty, we have another event
 		{
 			cout << "\nt = " << clock << ": ";
+			clockOutput = true; // We have outputted the clock, do not need to output a second time
 
 			pushArrivals(readyProcesses); // Push the newly arrived processes to the processes queue
 
+			//freePages = countFreePages();
+
 			while (!processes.empty())
 			{
-				memProcess = processes.front();
+				memProcess = processes.front(); // Get a process from front of the queue
 				cout << "\tMM moves Process " << memProcess.pid << " to memory\n";
 
-				processes.pop();
+				processes.pop(); // Remove the process from queue
 				printQueue(processes);
-				allocateProcess(memProcess);
+				allocateProcess(memProcess); // Allocate the process to memMap
 				printMemMap(pageSize);
 			}
 		}
 
-		vector<Process> finishedProcesses = getFinishedProcesses(clock);
+		vector<Process> finishedProcesses = getFinishedProcesses(clock); // Get the finished process according to the clock
 
 		for (int i = 0; i < finishedProcesses.size(); i++)
 		{
-			//cout << "t = " << clock << ": \n";
-			deallocateProcess(finishedProcesses[i]);
+			if(!clockOutput)
+			{
+				cout << "\nt = " << clock << ": \n";
+				clockOutput = true;
+			}
+
+			deallocateProcess(finishedProcesses[i]); // Deallocate the finished process
 			printMemMap(pageSize);
 		}
 
 		readyProcesses.clear();
 		finishedProcesses.clear();
+		clockOutput = false;
 
 		clock++;
+
+		checkSimulationComplete(done);
 	}
 }
