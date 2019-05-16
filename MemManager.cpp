@@ -21,7 +21,7 @@ void MemManager::readFile(string filename, int pageSize)
 	Process newProcess; //holds the new process we obtain from the input file
 	int components; //number of components for each process
 
-	infile.open(filename + ".txt");	//open file
+	infile.open(filename);	//open file
 
 	if (!infile.is_open())	//error check
 	{

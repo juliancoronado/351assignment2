@@ -2,7 +2,7 @@
 OBJS = main.cpp MemManager.cpp
 
 #CC specifies which compiler we're using
-CC = g++
+CC = g++ -std=c++17
 
 #COMPILER_FLAGS specifies the additional compilation options we're using
 # -Wall enables all warnings
