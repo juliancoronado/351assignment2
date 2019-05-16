@@ -78,7 +78,7 @@ void MemManager::initMap()
 	}
 }
 
-vector<Process> MemManager::getReadyProcesses()
+const vector<Process> MemManager::getReadyProcesses()
 {
 	vector<Process> temp;
 
@@ -93,7 +93,7 @@ vector<Process> MemManager::getReadyProcesses()
 	return temp;
 }
 
-void MemManager::printQueue(queue<Process> copyProcessQueue)
+const void MemManager::printQueue(queue<Process> copyProcessQueue)
 {
 	cout << "\tInput Queue:[";
 	while(!copyProcessQueue.empty())
@@ -149,7 +149,7 @@ void MemManager::allocateProcess(Process memProcess)
 	
 }
 
-void MemManager::printMemMap(int pageSize)
+const void MemManager::printMemMap(int pageSize)
 {
 	int acc = 0;
 	int pageNum = 1;
@@ -200,7 +200,7 @@ void MemManager::printMemMap(int pageSize)
 	}
 }
 
-vector<Process> MemManager::getFinishedProcesses(int clock)
+const vector<Process> MemManager::getFinishedProcesses(int clock)
 {
 	vector<Process> temp;
 

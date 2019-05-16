@@ -19,13 +19,13 @@ private:
 	int numPages;
 
 	void initMap();
-	vector<Process> getFinishedProcesses(int clock);
-	vector<Process> getReadyProcesses();
-	void printQueue(queue<Process> copyProcessQueue);
+	const vector<Process> getFinishedProcesses(int clock);
+	const vector<Process> getReadyProcesses();
+	const void printQueue(queue<Process> copyProcessQueue);
 	void pushArrivals(vector<Process> &readyProcesses);
 	void allocateProcess(Process memProcess);
 	void deallocateProcess(Process memProcess);
-	void printMemMap(int);
+	const void printMemMap(int);
 
 public:
 
