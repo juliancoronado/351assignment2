@@ -25,7 +25,13 @@ private:
 	void pushArrivals(vector<Process> &readyProcesses);
 	void allocateProcess(Process memProcess);
 	void deallocateProcess(Process memProcess);
+<<<<<<< HEAD
 	const void printMemMap(int);
+=======
+	void printMemMap(int);
+	int countFreePages();
+	void checkSimulationComplete(bool& done);
+>>>>>>> master
 
 public:
 
