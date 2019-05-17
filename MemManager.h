@@ -19,15 +19,16 @@ private:
 	int numPages;
 
 	void initMap();
-	vector<Process> getFinishedProcesses(int clock);
-	vector<Process> getReadyProcesses();
-	void printQueue(queue<Process> copyProcessQueue);
 	void pushArrivals(vector<Process> &readyProcesses);
 	void allocateProcess(Process memProcess);
 	void deallocateProcess(Process memProcess);
-	void printMemMap(int);
-	int countFreePages();
-	void checkSimulationComplete(bool& done);
+	
+	const void printMemMap(int);
+	const int countFreePages();
+	const void checkSimulationComplete(bool& done);
+	const vector<Process> getFinishedProcesses(int clock);
+	const vector<Process> getReadyProcesses();
+	const void printQueue(queue<Process> copyProcessQueue);
 
 public:
 
@@ -35,7 +36,7 @@ public:
     ~MemManager();
 
 	void readFile(string fileName, int pageSize);
-	void writeFile();
+	const void writeFile();
 
 	void simulate();
 };

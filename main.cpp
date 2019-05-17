@@ -10,11 +10,31 @@ int main()
 	cout << "This program simulates memory management." << endl;
 	cout << "Memory Size > ";
 	cin >> memorySize;
-	cout << "Page Size (1: 100, 2: 200, 3: 400) > ";
-	cin >> pageSize;
 
-	cout << "Input the name of the file you would like to process." << endl;
-	cout << "Please do not include a file extension, but ensure the file is a .txt file type." << endl;
+	while(true) {
+		if(cin.fail())
+		{
+			cin.clear();
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+			cout << "Memory Size > ";
+			cin >> memorySize;
+		}
+		if(!cin.fail()) break;
+	}
+
+	do {
+		cout << "Page Size (1: 100, 2: 200, 3: 400) > ";
+		cin >> pageSize;
+
+		if(cin.fail())
+		{
+			cin.clear();
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+		}
+
+	} while(pageSize != 1 && pageSize != 2 && pageSize != 3);
+
+	cout << "Enter input file name: " << endl;
 	cin >> inputFile;
 
 	switch (pageSize) {
