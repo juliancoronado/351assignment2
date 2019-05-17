@@ -31,7 +31,7 @@ void MemManager::readFile(string filename, int pageSize)
 
 	infile >> numProcesses;	//read number of processes
 
-	while (!infile.eof())	//process file. may not need to be a loop depending on design for calling this function
+	while (!infile.eof()) //process file. may not need to be a loop depending on design for calling this function
 	{
 		infile >> newProcess.pid;
 		infile >> newProcess.arrivalTime >> newProcess.burstTime;
@@ -124,8 +124,17 @@ void MemManager::allocateProcess(Process memProcess)
 	int start = 0;
 	int end = 0;
 
-	memProcess.running = true;
 	int numPages = memProcess.numPages; // Holds how many pages we need allocate
+
+	for(int i = 0; i < listProcesses.size(); i++)
+	{
+		if(memProcess.pid == listProcesses[i].pid)
+		{
+			listProcesses[i].finishTime = clock + listProcesses[i].burstTime;
+			listProcesses[i].running = true;
+			break;
+		}
+	}
 
 	for(int i = 0; i < memMap.size(); i++)
 	{
@@ -162,6 +171,7 @@ void MemManager::printMemMap(int pageSize)
 	
 	case 400:
 		adder = 399;
+		break;
 
 	default:
 		adder = 100;
@@ -189,7 +199,7 @@ void MemManager::printMemMap(int pageSize)
 		else
 		{
 			int freeFrameOutput = acc;
-			cout << "\tFree Frame(s): " << freeFrameOutput;
+			cout << '\t' << freeFrameOutput << "-";
 
 			while(i < memMap.size() && memMap.at(i).pid == -1)
 			{
@@ -197,13 +207,11 @@ void MemManager::printMemMap(int pageSize)
 				i++;
 			}
 
-			cout << "-";
-
 			i--; // i is incremented one too many times, decrement to counter
 
 			if(i < memMap.size())
 			{
-				cout << acc-1 << endl;
+				cout << acc-1 << ": Free Frame(s)" << endl;
 			}
 			else
 			{
@@ -219,7 +227,7 @@ vector<Process> MemManager::getFinishedProcesses(int clock)
 
 	for(Process &current: listProcesses)
 	{
-		if(clock == current.arrivalTime + current.burstTime)
+		if(clock == current.finishTime && current.running)
 		{
 			current.terminated = true;
 			temp.push_back(current);
@@ -296,13 +304,13 @@ void MemManager::simulate()
 
 			freePages = countFreePages();
 
-			while(processes.front().numPages <= freePages && !processes.empty()) // While we can allocate processes and there are processes to allocate
+			while (processes.front().numPages <= freePages && !processes.empty()) // While we can allocate processes and there are processes to allocate
 			{
 				memProcess = processes.front(); // Get the process at front of queue
 				cout << "\tMM moves Process " << memProcess.pid << " to memory\n";
 
 				processes.pop(); // Remove the process just allocated from the queue
-				printQueue(processes); 
+				printQueue(processes);
 				allocateProcess(memProcess); // Allocate process that was removed from queue
 				printMemMap(pageSize);
 				freePages = countFreePages(); // Update number of free pages
@@ -320,6 +328,18 @@ void MemManager::simulate()
 			}
 
 			deallocateProcess(finishedProcesses[i]); // Deallocate the finished process
+
+			if(!processes.empty() && processes.front().numPages <= countFreePages()) // Checks if we can allocate after deallocating a process
+			{
+				memProcess = processes.front(); // Get the process at front of queue
+				cout << "\tMM moves Process " << memProcess.pid << " to memory\n";
+
+				processes.pop(); // Remove the process just allocated from the queue
+				printQueue(processes);
+				allocateProcess(memProcess); // Allocate process that was removed from queue
+				printMemMap(pageSize);
+			}
+
 			printMemMap(pageSize);
 		}
 
