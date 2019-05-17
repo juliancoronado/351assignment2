@@ -44,9 +44,8 @@ int main()
 	case 2:
 		pageSize = 200;
 		break;
-
 	case 3:
-		pageSize = 300;
+		pageSize = 400;
 		break;
 	default:
 		cout << "Invalid selection, defaulting to 100." << endl;
