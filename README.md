@@ -22,6 +22,9 @@ How to execute the program:
 Contributions:
 
 Canyon Schwartz - Design documentation quality assurance, planned design of program, and implemented pseudocode
+
 Nathan Nhek - Pseudocode, Class diagram, planned structure of program, and quality assurance of program
+
 William Clemons - Planned structure of program and Implement pseudocode
+
 Julian Coronado - Implemented algorithms
