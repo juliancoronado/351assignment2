@@ -18,3 +18,10 @@ How to execute the program:
     2. cd into the newly unzipped file directory '351-Assignment2'
     3. type "make" into the command line to automatically compile the Memory Simulator
     4. to run the program, type ./memsimulator
+
+Contributions:
+
+Canyon Schwartz - Design documentation quality assurance, planned design of program, and implemented pseudocode
+Nathan Nhek - Pseudocode, Class diagram, planned structure of program, and quality assurance of program
+William Clemons - Planned structure of program and Implement pseudocode
+Julian Coronado - Implemented algorithms
