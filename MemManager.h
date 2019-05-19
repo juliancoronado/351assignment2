@@ -14,6 +14,7 @@ private:
 	int clock;
 	int numProcesses;
 	int pageSize;
+	ofstream outFile;
 
 	vector<Process> listProcesses;
 	int numPages;
@@ -27,6 +28,7 @@ private:
 	void deallocateProcess(Process memProcess);
 	void printMemMap(int);
 	int countFreePages();
+	double calcTurnAroundTime();
 	void checkSimulationComplete(bool& done);
 
 public:

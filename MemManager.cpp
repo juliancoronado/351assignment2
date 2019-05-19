@@ -7,11 +7,13 @@ MemManager::MemManager(int memSize, int pageSize) : processes(), memMap()
 	numProcesses = 0;
 	this->pageSize = pageSize;
 	numPages = memSize / pageSize;
+	outFile.open("outfile.txt");
 }
 
 MemManager::~MemManager()
 {
 	memMap.clear();
+	outFile.close();
 }
 
 void MemManager::readFile(string filename, int pageSize) 
@@ -95,17 +97,17 @@ vector<Process> MemManager::getReadyProcesses()
 
 void MemManager::printQueue(queue<Process> copyProcessQueue)
 {
-	cout << "\tInput Queue:[";
+	outFile << "\tInput Queue:[";
 	while(!copyProcessQueue.empty())
 	{
-		cout << copyProcessQueue.front().pid;
+		outFile << copyProcessQueue.front().pid;
 		if(!(copyProcessQueue.size() == 1))
 		{
-			cout << " ";
+			outFile << " ";
 		}
 		copyProcessQueue.pop();
 	}
-	cout << "]\n";
+	outFile << "]\n";
 }
 
 void MemManager::pushArrivals(vector<Process> &readyProcesses)
@@ -113,7 +115,7 @@ void MemManager::pushArrivals(vector<Process> &readyProcesses)
 	for(int i = 0; i < readyProcesses.size(); i++)
 	{
 		processes.push(readyProcesses[i]);
-		cout << "\n\tProcess " << readyProcesses[i].pid << " arrives\n";
+		outFile << "\n\tProcess " << readyProcesses[i].pid << " arrives\n";
 		printQueue(processes); 
 	}
 }
@@ -178,7 +180,7 @@ void MemManager::printMemMap(int pageSize)
 		break;
 	}
 
-	cout << "\tMemory Map: \n";
+	outFile << "\tMemory Map: \n";
 
 	for (int i = 0; i < memMap.size(); i++)
 	{
@@ -188,7 +190,7 @@ void MemManager::printMemMap(int pageSize)
 
 			while(i < memMap.size() && memMap.at(i).pid == currProcId)
 			{
-				cout << '\t' << acc << "-" << acc+adder << ": Process " << memMap[i].pid << ", Page " << pageCounts[currProcId-1] << endl;
+				outFile << '\t' << acc << "-" << acc+adder << ": Process " << memMap[i].pid << ", Page " << pageCounts[currProcId-1] << endl;
 				acc += pageSize;
 				i++;
 				pageCounts[currProcId-1]++;
@@ -199,7 +201,7 @@ void MemManager::printMemMap(int pageSize)
 		else
 		{
 			int freeFrameOutput = acc;
-			cout << '\t' << freeFrameOutput << "-";
+			outFile << '\t' << freeFrameOutput << "-";
 
 			while(i < memMap.size() && memMap.at(i).pid == -1)
 			{
@@ -211,11 +213,11 @@ void MemManager::printMemMap(int pageSize)
 
 			if(i < memMap.size())
 			{
-				cout << acc-1 << ": Free Frame(s)" << endl;
+				outFile << acc-1 << ": Free Frame(s)" << endl;
 			}
 			else
 			{
-				cout << acc+99 << endl;
+				outFile << acc+99 << endl;
 			}
 		}	
 	}
@@ -242,7 +244,7 @@ void MemManager::deallocateProcess(Process memProcess)
 	Process removeProcess;
 	removeProcess.pid = -1;
 
-	cout << "\tProcess " << memProcess.pid << " completes\n";
+	outFile << "\tProcess " << memProcess.pid << " completes\n";
 
 	for(int i = 0; i < memMap.size(); i++)
 	{
@@ -282,6 +284,21 @@ void MemManager::checkSimulationComplete(bool& done)
 	done = true; // If every process has been marked as terminated, we are done
 }
 
+double MemManager::calcTurnAroundTime()
+{
+	int totalTurnAround = 0;
+	double avgTurnAround = 0;
+
+	for(Process &current : listProcesses)
+	{
+		totalTurnAround += current.burstTime;
+	}
+
+	avgTurnAround = double(totalTurnAround) / listProcesses.size();
+
+	return avgTurnAround;
+}
+
 void MemManager::simulate()
 {
 	Process memProcess;
@@ -297,7 +314,7 @@ void MemManager::simulate()
 
 		if (!readyProcesses.empty()) // If the list of ready processes is not empty, we have another event
 		{
-			cout << "\nt = " << clock << ": ";
+			outFile << "\nt = " << clock << ": ";
 			clockOutput = true; // We have outputted the clock, do not need to output a second time
 
 			pushArrivals(readyProcesses); // Push the newly arrived processes to the processes queue
@@ -307,7 +324,7 @@ void MemManager::simulate()
 			while (processes.front().numPages <= freePages && !processes.empty()) // While we can allocate processes and there are processes to allocate
 			{
 				memProcess = processes.front(); // Get the process at front of queue
-				cout << "\tMM moves Process " << memProcess.pid << " to memory\n";
+				outFile << "\tMM moves Process " << memProcess.pid << " to memory\n";
 
 				processes.pop(); // Remove the process just allocated from the queue
 				printQueue(processes);
@@ -323,7 +340,7 @@ void MemManager::simulate()
 		{
 			if(!clockOutput)
 			{
-				cout << "\nt = " << clock << ": \n";
+				outFile << "\nt = " << clock << ": \n";
 				clockOutput = true;
 			}
 
@@ -332,7 +349,7 @@ void MemManager::simulate()
 			if(!processes.empty() && processes.front().numPages <= countFreePages()) // Checks if we can allocate after deallocating a process
 			{
 				memProcess = processes.front(); // Get the process at front of queue
-				cout << "\tMM moves Process " << memProcess.pid << " to memory\n";
+				outFile << "\tMM moves Process " << memProcess.pid << " to memory\n";
 
 				processes.pop(); // Remove the process just allocated from the queue
 				printQueue(processes);
@@ -351,4 +368,6 @@ void MemManager::simulate()
 
 		checkSimulationComplete(done); // Check if we are done
 	}
+
+	outFile << "Avg Turnaround time: " << calcTurnAroundTime() << endl;
 }
