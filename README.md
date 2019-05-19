@@ -18,6 +18,7 @@ How to execute the program:
     2. cd into the newly unzipped file directory '351-Assignment2'
     3. type "make" into the command line to automatically compile the Memory Simulator
     4. to run the program, type ./memsimulator
+    5. to see the result of the program, type cat outfile.txt
 
 Contributions:
 
