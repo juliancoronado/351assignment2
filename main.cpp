@@ -34,8 +34,9 @@ int main()
 
 	} while(pageSize != 1 && pageSize != 2 && pageSize != 3);
 
-	cout << "Enter input file name: " << endl;
-	cin >> inputFile;
+	cout << "Enter input file name: ";
+	cin.ignore(1000, '\n');
+	getline(cin, inputFile);
 
 	switch (pageSize) {
 	case 1:
@@ -51,6 +52,8 @@ int main()
 		cout << "Invalid selection, defaulting to 100." << endl;
 		pageSize = 100;
 	}
+
+	cout << "ms: " << memorySize << endl << "ps: " << pageSize << endl;
 
 	MemManager memManager(memorySize, pageSize);
 

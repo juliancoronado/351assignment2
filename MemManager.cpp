@@ -61,7 +61,7 @@ void MemManager::readFile(string filename, int pageSize)
 	infile.close();
 }
 
-const void MemManager::writeFile()
+void MemManager::writeFile()
 {
 	ofstream outfile;	//create output file handler
 	outfile.open("output1.txt");	//open output file
@@ -78,7 +78,7 @@ void MemManager::initMap()
 	}
 }
 
-const vector<Process> MemManager::getReadyProcesses()
+vector<Process> MemManager::getReadyProcesses()
 {
 	vector<Process> temp;
 
@@ -93,7 +93,7 @@ const vector<Process> MemManager::getReadyProcesses()
 	return temp;
 }
 
-const void MemManager::printQueue(queue<Process> copyProcessQueue)
+void MemManager::printQueue(queue<Process> copyProcessQueue)
 {
 	cout << "\tInput Queue:[";
 	while(!copyProcessQueue.empty())
@@ -151,7 +151,7 @@ void MemManager::allocateProcess(Process memProcess)
 	}
 }
 
-const void MemManager::printMemMap(int pageSize)
+void MemManager::printMemMap(int pageSize)
 {
 	int acc = 0;
 	int pageNum = 1;
@@ -221,7 +221,7 @@ const void MemManager::printMemMap(int pageSize)
 	}
 }
 
-const vector<Process> MemManager::getFinishedProcesses(int clock)
+vector<Process> MemManager::getFinishedProcesses(int clock)
 {
 	vector<Process> temp;
 
@@ -253,7 +253,7 @@ void MemManager::deallocateProcess(Process memProcess)
 	}
 }
 
-const int MemManager::countFreePages()
+int MemManager::countFreePages()
 {
 	int freePages;
 
@@ -268,7 +268,7 @@ const int MemManager::countFreePages()
 	return freePages;
 }
 
-const void MemManager::checkSimulationComplete(bool& done)
+void MemManager::checkSimulationComplete(bool& done)
 {
 	for(int i = 0; i < listProcesses.size(); i++)
 	{
