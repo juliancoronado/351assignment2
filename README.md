@@ -14,11 +14,12 @@ Language Used: C++
 
 How to execute the program:
 
-    1. unzip the files on a linux machine by typing "tar -xvf '351-Assignment2.tar'
-    2. cd into the newly unzipped file directory '351-Assignment2'
+    1. unzip the files on a linux machine by typing "tar -xvf '351-Assignment2-nnhek.tar'
+    2. cd into the newly unzipped file directory '351-Assignment2-nnhek'
     3. type "make" into the command line to automatically compile the Memory Simulator
     4. to run the program, type ./memsimulator
     5. to see the result of the program, type cat outfile.txt
+    6. to run the program again with different inputs, repeat step 4
 
 Contributions:
 
