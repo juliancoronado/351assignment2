@@ -28,3 +28,5 @@ Nathan Nhek - Pseudocode, Class diagram, planned structure of program, and quali
 William Clemons - Planned structure of program and Implement pseudocode
 
 Julian Coronado - Implemented algorithms
+
+NOTE: If when running the program memsimulator, only the input queue appears, please repeat steps 3 and 4 listed above. This is a known bug with an unknown fix as of yet.
